@@ -1,0 +1,22 @@
+.Navigation {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.NavigationMenu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.NavigationItem {
+  display: inline-block;
+}
+
+.NavigationItem:not(:last-child) {
+  margin-right: 20px;
+}
+
+.NavLink {
+  text-decoration: none;
+}
