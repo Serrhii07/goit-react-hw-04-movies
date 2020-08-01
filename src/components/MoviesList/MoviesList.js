@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const MoviesList = ({ movies, location }) => {
   return (
@@ -20,6 +21,14 @@ const MoviesList = ({ movies, location }) => {
       ))}
     </ul>
   );
+};
+
+MoviesList.defaultProps = {
+  movies: [],
+};
+
+MoviesList.propTypes = {
+  movies: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default withRouter(MoviesList);

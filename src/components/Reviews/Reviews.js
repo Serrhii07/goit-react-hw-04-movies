@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
-const key = '30e6eb2b274ffe40b2ea0cfb44f5f954';
+import moviesApi from '../../services/movies-api';
+import './Reviews.scss';
 
 class Reviews extends Component {
   state = {
@@ -11,25 +10,28 @@ class Reviews extends Component {
   async componentDidMount() {
     const { movieId } = this.props.match.params;
 
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}/reviews?api_key=${key}&language=en-US&page=1`,
-    );
-
+    const response = await moviesApi.getMovieReviews(movieId);
     this.setState({ reviews: response.data.results });
   }
 
   render() {
+    const { reviews } = this.state;
+
     return (
-      <>
+      <div>
+        {reviews.length === 0 && (
+          <p>We don't have any reviews for this movie.</p>
+        )}
+
         <ul>
-          {this.state.reviews.map(({ id, author, content }) => (
+          {reviews.map(({ id, author, content }) => (
             <li key={id}>
-              <p>Author: {author}</p>
-              <p>{content}</p>
+              <p className="Author">Author: {author}</p>
+              <p className="Content">{content}</p>
             </li>
           ))}
         </ul>
-      </>
+      </div>
     );
   }
 }

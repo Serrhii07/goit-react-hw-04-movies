@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import MoviesList from '../components/MoviesList';
-import axios from 'axios';
-
-const key = '30e6eb2b274ffe40b2ea0cfb44f5f954';
+import moviesApi from '../services/movies-api';
 
 class HomePage extends Component {
   state = {
@@ -10,18 +8,20 @@ class HomePage extends Component {
   };
 
   async componentDidMount() {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/trending/movie/day?api_key=${key}`,
-    );
+    const { data } = await moviesApi.getTrendingMovies();
 
-    this.setState({ trendingMovies: response.data.results });
+    this.setState({
+      trendingMovies: data.results,
+    });
   }
 
   render() {
+    const { trendingMovies } = this.state;
+
     return (
       <>
         <h1>Trending today</h1>
-        <MoviesList movies={this.state.trendingMovies} />
+        <MoviesList movies={trendingMovies} />
       </>
     );
   }

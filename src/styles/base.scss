@@ -26,10 +26,61 @@ img {
   height: auto;
 }
 
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
 .NavLink {
   color: #212121;
 }
 
 .NavLink--active {
   color: palevioletred;
+}
+
+.Search_input {
+  width: 360px;
+}
+
+.Search_input_btn {
+  cursor: pointer;
+}
+
+.GoBackBtn {
+  margin-bottom: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.MovieInfoWrap {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.MovieInfo {
+  padding: 22px;
+}
+
+.MovieInfo_title,
+.MovieInfo_score,
+.MovieInfo_overview,
+.MovieInfo_text,
+.MovieInfo_genres {
+  margin-bottom: 20px;
+}
+
+.MovieInfo_genres_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.Additional_info {
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #c7c2c2;
+  border-bottom: 2px solid #c7c2c2;
 }

@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { NavLink, Route, Switch } from 'react-router-dom';
-import axios from 'axios';
+import { Route, Switch } from 'react-router-dom';
 import Cast from '../components/Cast';
 import Reviews from '../components/Reviews';
+import AdditionalInfoNav from '../components/AdditionalInfoNav';
 import routes from '../routes';
-
-const key = '30e6eb2b274ffe40b2ea0cfb44f5f954';
+import moviesApi from '../services/movies-api';
 
 class MovieDetailsPage extends Component {
   state = {
@@ -20,15 +19,13 @@ class MovieDetailsPage extends Component {
   async componentDidMount() {
     const { movieId } = this.props.match.params;
 
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${movieId}?api_key=${key}`,
-    );
-
+    const response = await moviesApi.getMovieDetails(movieId);
     this.setState({ ...response.data });
   }
 
   getYear = () => {
     const { release_date } = this.state;
+
     if (release_date) {
       return release_date.slice(0, 4);
     }
@@ -45,51 +42,37 @@ class MovieDetailsPage extends Component {
   };
 
   render() {
+    const { movieId } = this.props.match.params;
     const { poster_path, title, vote_count, overview, genres } = this.state;
-    const imgURL = 'https://image.tmdb.org/t/p/w300/';
 
     return (
-      <>
-        <button type="button" onClick={this.handleGoBack}>
+      <div>
+        <button type="button" onClick={this.handleGoBack} className="GoBackBtn">
           &#8592; Go back
         </button>
-        <img src={`${imgURL}${poster_path}`} alt={title} />
-        <div>
-          <h2>
-            {title} ({this.getYear()})
-          </h2>
-          <p>User Score: {vote_count}%</p>
-          <h3>Overview</h3>
-          <p>{overview}</p>
-          <h3>Genres</h3>
-          <ul>
-            {genres.map(({ id, name }) => (
-              <li key={id}>{name}</li>
-            ))}
-          </ul>
+        <div className="MovieInfoWrap">
+          <img src={`${moviesApi.movieImgURL}${poster_path}`} alt={title} />
+          <div className="MovieInfo">
+            <h2 className="MovieInfo_title">
+              {title} ({this.getYear()})
+            </h2>
+            <p className="MovieInfo_score">User Score: {vote_count}%</p>
+            <h3 className="MovieInfo_overview">Overview</h3>
+            <p className="MovieInfo_text">{overview}</p>
+            <h3 className="MovieInfo_genres">Genres</h3>
+            <ul className="MovieInfo_genres_list">
+              {genres.map(({ id, name }) => (
+                <li key={id}>{name}</li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <p>Additional information</p>
-        <ul>
-          <li>
-            <NavLink
-              to={`${this.props.match.url}/cast`}
-              className="NavLink"
-              activeClassName="NavLink--active"
-            >
-              Cast
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to={`${this.props.match.url}/reviews`}
-              className="NavLink"
-              activeClassName="NavLink--active"
-            >
-              Reviews
-            </NavLink>
-          </li>
-        </ul>
+        <div className="Additional_info">
+          <p>Additional information</p>
+          <AdditionalInfoNav movieId={movieId} />
+        </div>
+
         <Switch>
           <Route path={`${this.props.match.path}/cast`} component={Cast} />
           <Route
@@ -97,7 +80,7 @@ class MovieDetailsPage extends Component {
             component={Reviews}
           />
         </Switch>
-      </>
+      </div>
     );
   }
 }

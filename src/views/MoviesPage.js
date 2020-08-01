@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import MoviesList from '../components/MoviesList';
-import axios from 'axios';
-
-const key = '30e6eb2b274ffe40b2ea0cfb44f5f954';
+import moviesApi from '../services/movies-api';
 
 class MoviesPage extends Component {
   state = {
@@ -14,19 +12,21 @@ class MoviesPage extends Component {
     const query = localStorage.getItem('query');
 
     if (query) {
-      axios
-        .get(
-          `https://api.themoviedb.org/3/search/movie?api_key=${key}&language=en-US&query=${this.state.query}&page=1&include_adult=false`,
-        )
-        .then(response => this.setState({ movies: response.data.results }));
+      this.setState({ query }, () => {
+        this.fetchMovies();
+      });
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.query !== prevState.query) {
-      localStorage.setItem('query', this.state.query);
-    }
-  }
+  fetchMovies = () => {
+    const { query } = this.state;
+
+    moviesApi.fetchMovies(query).then(movies => {
+      this.setState({
+        movies,
+      });
+    });
+  };
 
   handleChange = e => {
     this.setState({ query: e.target.value });
@@ -35,92 +35,31 @@ class MoviesPage extends Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    axios
-      .get(
-        `https://api.themoviedb.org/3/search/movie?api_key=${key}&language=en-US&query=${this.state.query}&page=1&include_adult=false`,
-      )
-      .then(response => this.setState({ movies: response.data.results }));
+    const { query } = this.state;
+    localStorage.setItem('query', query);
+
+    this.fetchMovies();
   };
 
   render() {
+    const { movies } = this.state;
+
     return (
       <>
         <form onSubmit={this.handleSubmit}>
           <input
             type="text"
-            value={this.state.query}
             onChange={this.handleChange}
+            className="Search_input"
           ></input>
-          <button type="submit">Search</button>
+          <button type="submit" className="Search_input_btn">
+            Search
+          </button>
         </form>
-
-        <MoviesList movies={this.state.movies} />
+        <MoviesList movies={movies} />
       </>
     );
   }
 }
 
 export default MoviesPage;
-
-// import React, { Component } from 'react';
-// import MoviesList from '../components/MoviesList';
-// import axios from 'axios';
-
-// const key = '30e6eb2b274ffe40b2ea0cfb44f5f954';
-
-// class MoviesPage extends Component {
-//   state = {
-//     query: '',
-//     movies: [],
-//   };
-
-//   componentDidMount() {
-//     const query = localStorage.getItem('query');
-//     this.setState({ query });
-
-//     axios
-//       .get(
-//         `https://api.themoviedb.org/3/search/movie?api_key=${key}&language=en-US&query=${this.state.query}&page=1&include_adult=false`,
-//       )
-//       .then(response => this.setState({ movies: response.data.results }));
-//   }
-
-//   componentDidUpdate(prevProps, prevState) {
-//     if (this.state.query !== prevState.query) {
-//       localStorage.setItem('query', this.state.query);
-//     }
-
-//     axios
-//       .get(
-//         `https://api.themoviedb.org/3/search/movie?api_key=${key}&language=en-US&query=${this.state.query}&page=1&include_adult=false`,
-//       )
-//       .then(response => this.setState({ movies: response.data.results }));
-//   }
-
-//   handleChange = e => {
-//     this.setState({ query: e.target.value });
-//   };
-
-//   handleSubmit = e => {
-//     e.preventDefault();
-//   };
-
-//   render() {
-//     return (
-//       <>
-//         <form onSubmit={this.handleSubmit}>
-//           <input
-//             type="text"
-//             value={this.state.query}
-//             onChange={this.handleChange}
-//           ></input>
-//           <button type="submit">Search</button>
-//         </form>
-
-//         <MoviesList movies={this.state.movies} />
-//       </>
-//     );
-//   }
-// }
-
-// export default MoviesPage;
